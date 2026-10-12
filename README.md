@@ -79,6 +79,15 @@ This project is intended to demonstrate practical software engineering skills, i
 - Applying clean architecture principles and separation of concerns.
 - Automating builds and tests using CI/CD pipelines.
 
+## Development Roadmap
+
+- [ ] **Define the MVP** - Document requirements, user roles, attendance rules, and the scope of the first release.
+- [ ] **Set Up GitHub and .NET** - Create the repository, initialize the .NET solution, and set up the first ASP.NET Core Web API project.
+- [ ] **Set Up the API and Database** - Connect PostgreSQL, configure Entity Framework Core, and create the initial database migration.
+- [ ] **Implement the Attendance Data Model** - Create the `School`, `User`, and `AttendanceRecord` entities and define their relationships.
+- [ ] **Implement Check-In and Check-Out** - Develop the initial API endpoints and validate business rules.
+- [ ] **Document and Review** - Update the README, review the project structure, and define the next sprint.
+
 ## License
 
 All rights reserved. See the repository's licensing notice for details.
