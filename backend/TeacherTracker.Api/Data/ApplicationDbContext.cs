@@ -11,5 +11,9 @@ namespace TeacherTracker.Api.Data
         }
 
         public DbSet<Teacher> Teachers => Set<Teacher>();
+
+        public DbSet<Schools> Schools => Set<Schools>();
+
+
     }
 }
