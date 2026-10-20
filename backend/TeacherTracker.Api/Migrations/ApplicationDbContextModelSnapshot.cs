@@ -22,6 +22,70 @@ namespace TeacherTracker.Api.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("TeacherTracker.Api.Models.AttendanceCode", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("category");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("code");
+
+                    b.Property<string>("EmployeeType")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("employee_type");
+
+                    b.Property<decimal?>("HoursValue")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("numeric(5,2)")
+                        .HasColumnName("hours_value");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("name");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer")
+                        .HasColumnName("sort_order");
+
+                    b.Property<int?>("WorkCategoryId")
+                        .HasColumnType("integer")
+                        .HasColumnName("work_category_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_attendance_codes");
+
+                    b.HasIndex("Code")
+                        .IsUnique()
+                        .HasDatabaseName("ix_attendance_codes_code");
+
+                    b.HasIndex("WorkCategoryId")
+                        .HasDatabaseName("ix_attendance_codes_work_category_id");
+
+                    b.ToTable("attendance_codes", (string)null);
+                });
+
             modelBuilder.Entity("TeacherTracker.Api.Models.Employee", b =>
                 {
                     b.Property<int>("Id")
@@ -202,6 +266,69 @@ namespace TeacherTracker.Api.Migrations
                         .HasName("pk_teachers");
 
                     b.ToTable("teachers", (string)null);
+                });
+
+            modelBuilder.Entity("TeacherTracker.Api.Models.WorkCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("code");
+
+                    b.Property<string>("EmployeeType")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("employee_type");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("name");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer")
+                        .HasColumnName("sort_order");
+
+                    b.Property<string>("Unit")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("unit");
+
+                    b.HasKey("Id")
+                        .HasName("pk_work_categories");
+
+                    b.HasIndex("Code")
+                        .IsUnique()
+                        .HasDatabaseName("ix_work_categories_code");
+
+                    b.ToTable("work_categories", (string)null);
+                });
+
+            modelBuilder.Entity("TeacherTracker.Api.Models.AttendanceCode", b =>
+                {
+                    b.HasOne("TeacherTracker.Api.Models.WorkCategory", "WorkCategory")
+                        .WithMany()
+                        .HasForeignKey("WorkCategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_attendance_codes_work_categories_work_category_id");
+
+                    b.Navigation("WorkCategory");
                 });
 
             modelBuilder.Entity("TeacherTracker.Api.Models.EmploymentRecord", b =>
