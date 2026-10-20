@@ -50,16 +50,22 @@ namespace TeacherTracker.Api.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    name = table.Column<string>(type: "text", nullable: true),
-                    oib = table.Column<string>(type: "text", nullable: true),
-                    address = table.Column<string>(type: "text", nullable: true),
-                    city = table.Column<string>(type: "text", nullable: true),
-                    is_active = table.Column<bool>(type: "boolean", nullable: false)
+                    name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    oib = table.Column<string>(type: "character varying(11)", maxLength: 11, nullable: false),
+                    address = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    city = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    is_active = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_schools", x => x.id);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "ix_schools_oib",
+                table: "schools",
+                column: "oib",
+                unique: true);
         }
 
         /// <inheritdoc />

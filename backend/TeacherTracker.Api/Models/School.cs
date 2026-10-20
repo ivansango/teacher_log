@@ -2,25 +2,25 @@
 
 namespace TeacherTracker.Api.Models
 {
-    public class Schools
+    public class School
     {
         public int Id { get; set; }
 
         [Required]
         [MaxLength(200)]
-        public string? Name { get; set; }
+        public string Name { get; set; } = "";
 
         [Required]
         [StringLength(11)]
-        public string? OIB { get; set; }
+        public string OIB { get; set; } = "";
 
         [Required]
         [MaxLength(200)]
-        public string? Address { get; set; }
+        public string Address { get; set; } = "";
 
         [Required]
         [MaxLength(100)]
-        public string? City { get; set; }
+        public string City { get; set; } = "";
 
         public bool IsActive { get; set; } = true;
     }

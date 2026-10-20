@@ -12,8 +12,22 @@ namespace TeacherTracker.Api.Data
 
         public DbSet<Teacher> Teachers => Set<Teacher>();
 
-        public DbSet<Schools> Schools => Set<Schools>();
+        public DbSet<School> Schools => Set<School>();
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
 
 
+            modelBuilder.Entity<School>(entity =>
+            {
+                entity.HasIndex(s => s.OIB)
+                    .IsUnique();
+
+                entity.Property(s => s.IsActive)
+                    .HasDefaultValue(true);
+
+            });
+        }
     }
 }

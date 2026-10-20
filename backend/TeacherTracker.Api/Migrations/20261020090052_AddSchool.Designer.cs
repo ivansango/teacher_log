@@ -11,7 +11,7 @@ using TeacherTracker.Api.Data;
 namespace TeacherTracker.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20261018173602_AddSchool")]
+    [Migration("20261020090052_AddSchool")]
     partial class AddSchool
     {
         /// <inheritdoc />
@@ -24,7 +24,7 @@ namespace TeacherTracker.Api.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("TeacherTracker.Api.Models.Schools", b =>
+            modelBuilder.Entity("TeacherTracker.Api.Models.School", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -34,27 +34,41 @@ namespace TeacherTracker.Api.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Address")
-                        .HasColumnType("text")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
                         .HasColumnName("address");
 
                     b.Property<string>("City")
-                        .HasColumnType("text")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
                         .HasColumnName("city");
 
                     b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
+                        .HasDefaultValue(true)
                         .HasColumnName("is_active");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
                         .HasColumnName("name");
 
                     b.Property<string>("OIB")
-                        .HasColumnType("text")
+                        .IsRequired()
+                        .HasMaxLength(11)
+                        .HasColumnType("character varying(11)")
                         .HasColumnName("oib");
 
                     b.HasKey("Id")
                         .HasName("pk_schools");
+
+                    b.HasIndex("OIB")
+                        .IsUnique()
+                        .HasDatabaseName("ix_schools_oib");
 
                     b.ToTable("schools", (string)null);
                 });
