@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TeacherTracker.Api.Enums;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using TeacherTracker.Api.Models;
 
 namespace TeacherTracker.Api.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(
             DbContextOptions<ApplicationDbContext> options ) : base( options ) 
