@@ -25,6 +25,16 @@ namespace TeacherTracker.Api.Data
 
         public DbSet<MonthlyRecord> MonthlyRecords => Set<MonthlyRecord>();
 
+        public DbSet<DailyRecord> DailyRecords => Set<DailyRecord>();
+
+        public DbSet<DailyAttendanceSlot> DailyAttendanceSlots => Set<DailyAttendanceSlot>();
+
+        public DbSet<DailyWorkEntry> DailyWorkEntries => Set<DailyWorkEntry>();
+
+        public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
+
+        public DbSet<MonthlyRecordVersion> MonthlyRecordVersions => Set<MonthlyRecordVersion>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -142,7 +152,7 @@ namespace TeacherTracker.Api.Data
                 entity.Property(mr => mr.Status)
                       .HasConversion<string>()
                       .HasMaxLength(20)
-                      .HasDefaultValue(MonthlyRecordStatus.Open);
+                      .IsRequired();
 
                 entity.Property(mr => mr.CreatedAt)
                       .HasColumnType("timestamp with time zone");
@@ -156,6 +166,153 @@ namespace TeacherTracker.Api.Data
                         "ck_monthly_records_month",
                         "month BETWEEN 1 AND 12");
                 });
+            });
+
+            modelBuilder.Entity<DailyRecord>(entity =>
+            {
+                entity.HasKey(dr => dr.Id);
+
+                entity.HasOne(dr => dr.MonthlyRecord)
+                      .WithMany()
+                      .HasForeignKey(dr => dr.MonthlyRecordId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasIndex(dr => new
+                {
+                    dr.MonthlyRecordId,
+                    dr.WorkDate
+                }).IsUnique();
+
+                entity.Property(dr => dr.CreatedAt)
+                      .HasColumnType("timestamp with time zone");
+
+                entity.Property(dr => dr.UpdatedAt)
+                      .HasColumnType("timestamp with time zone");
+            });
+
+            modelBuilder.Entity<DailyAttendanceSlot>(entity =>
+            {
+                entity.HasKey(das => das.Id);
+
+                entity.HasOne(das => das.DailyRecord)
+                      .WithMany()
+                      .HasForeignKey(das => das.DailyRecordId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(das => das.AttendanceCode)
+                      .WithMany()
+                      .HasForeignKey(das => das.AttendanceCodeId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasIndex(das => new
+                {
+                    das.DailyRecordId,
+                    das.Shift,
+                    das.SlotNumber
+                }).IsUnique();
+
+                entity.Property(das => das.Shift)
+                      .HasConversion<string>()
+                      .HasMaxLength(20);
+            });
+
+            modelBuilder.Entity<DailyWorkEntry>(entity =>
+            {
+                entity.HasKey(dwe => dwe.Id);
+
+                entity.HasOne(dwe => dwe.DailyRecord)
+                      .WithMany()
+                      .HasForeignKey(dwe => dwe.DailyRecordId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(dwe => dwe.WorkCategory)
+                      .WithMany()
+                      .HasForeignKey(dwe => dwe.WorkCategoryId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasIndex(dwe => new
+                {
+                    dwe.DailyRecordId,
+                    dwe.WorkCategoryId
+                }).IsUnique();
+
+                entity.Property(dwe => dwe.Hours)
+                      .HasPrecision(5, 2);
+            });
+
+            modelBuilder.Entity<AuditLog>(entity =>
+            {
+                entity.HasKey(a => a.Id);
+
+                entity.HasOne(a => a.School)
+                      .WithMany()
+                      .HasForeignKey(a => a.SchoolId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.Property(a => a.EntityType)
+                      .HasMaxLength(100)
+                      .IsRequired();
+
+                entity.Property(a => a.EntityId)
+                      .HasMaxLength(100)
+                      .IsRequired();
+
+                entity.Property(a => a.Action)
+                      .HasMaxLength(50)
+                      .IsRequired();
+
+                entity.Property(a => a.UserId)
+                      .IsRequired();
+
+                entity.Property(a => a.OldValues)
+                      .HasColumnType("jsonb");
+
+                entity.Property(a => a.NewValues)
+                      .HasColumnType("jsonb");
+
+                entity.Property(a => a.CreatedAt)
+                      .HasColumnType("timestamp with time zone");
+
+                entity.HasIndex(a => new
+                {
+                    a.SchoolId,
+                    a.CreatedAt
+                });
+
+                entity.HasIndex(a => a.CorrelationId);
+            });
+
+            modelBuilder.Entity<MonthlyRecordVersion>(entity =>
+            {
+                entity.HasKey(v => v.Id);
+
+                entity.HasOne(v => v.MonthlyRecord)
+                      .WithMany()
+                      .HasForeignKey(v => v.MonthlyRecordId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasIndex(v => new
+                {
+                    v.MonthlyRecordId,
+                    v.VersionNumber
+                }).IsUnique();
+
+                entity.Property(v => v.SnapshotData)
+                      .HasColumnType("jsonb")
+                      .IsRequired();
+
+                entity.Property(v => v.SchemaVersion)
+                      .HasDefaultValue(1);
+
+                entity.Property(v => v.ContentHash)
+                      .HasMaxLength(64)
+                      .IsRequired();
+
+                entity.Property(v => v.CreatedAt)
+                      .HasColumnType("timestamp with time zone");
+
+                entity.Property(v => v.CreatedByUserId)
+                      .IsRequired();
             });
         }
     }

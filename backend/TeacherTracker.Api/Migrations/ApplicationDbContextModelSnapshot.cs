@@ -86,6 +86,207 @@ namespace TeacherTracker.Api.Migrations
                     b.ToTable("attendance_codes", (string)null);
                 });
 
+            modelBuilder.Entity("TeacherTracker.Api.Models.AuditLog", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("action");
+
+                    b.Property<Guid>("CorrelationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("correlation_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("EntityId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("entity_id");
+
+                    b.Property<string>("EntityType")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("entity_type");
+
+                    b.Property<string>("NewValues")
+                        .HasColumnType("jsonb")
+                        .HasColumnName("new_values");
+
+                    b.Property<string>("OldValues")
+                        .HasColumnType("jsonb")
+                        .HasColumnName("old_values");
+
+                    b.Property<string>("Reason")
+                        .HasColumnType("text")
+                        .HasColumnName("reason");
+
+                    b.Property<int>("SchoolId")
+                        .HasColumnType("integer")
+                        .HasColumnName("school_id");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_audit_logs");
+
+                    b.HasIndex("CorrelationId")
+                        .HasDatabaseName("ix_audit_logs_correlation_id");
+
+                    b.HasIndex("SchoolId", "CreatedAt")
+                        .HasDatabaseName("ix_audit_logs_school_id_created_at");
+
+                    b.ToTable("audit_logs", (string)null);
+                });
+
+            modelBuilder.Entity("TeacherTracker.Api.Models.DailyAttendanceSlot", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<int?>("AttendanceCodeId")
+                        .HasColumnType("integer")
+                        .HasColumnName("attendance_code_id");
+
+                    b.Property<Guid>("DailyRecordId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("daily_record_id");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("text")
+                        .HasColumnName("note");
+
+                    b.Property<string>("Shift")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("shift");
+
+                    b.Property<int>("SlotNumber")
+                        .HasColumnType("integer")
+                        .HasColumnName("slot_number");
+
+                    b.HasKey("Id")
+                        .HasName("pk_daily_attendance_slots");
+
+                    b.HasIndex("AttendanceCodeId")
+                        .HasDatabaseName("ix_daily_attendance_slots_attendance_code_id");
+
+                    b.HasIndex("DailyRecordId", "Shift", "SlotNumber")
+                        .IsUnique()
+                        .HasDatabaseName("ix_daily_attendance_slots_daily_record_id_shift_slot_number");
+
+                    b.ToTable("daily_attendance_slots", (string)null);
+                });
+
+            modelBuilder.Entity("TeacherTracker.Api.Models.DailyRecord", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("CreatedByUserId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("created_by_user_id");
+
+                    b.Property<TimeOnly?>("EndTime")
+                        .HasColumnType("time without time zone")
+                        .HasColumnName("end_time");
+
+                    b.Property<int>("MonthlyRecordId")
+                        .HasColumnType("integer")
+                        .HasColumnName("monthly_record_id");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("text")
+                        .HasColumnName("note");
+
+                    b.Property<TimeOnly?>("StartTime")
+                        .HasColumnType("time without time zone")
+                        .HasColumnName("start_time");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<string>("UpdatedByUserId")
+                        .HasColumnType("text")
+                        .HasColumnName("updated_by_user_id");
+
+                    b.Property<DateOnly>("WorkDate")
+                        .HasColumnType("date")
+                        .HasColumnName("work_date");
+
+                    b.HasKey("Id")
+                        .HasName("pk_daily_records");
+
+                    b.HasIndex("MonthlyRecordId", "WorkDate")
+                        .IsUnique()
+                        .HasDatabaseName("ix_daily_records_monthly_record_id_work_date");
+
+                    b.ToTable("daily_records", (string)null);
+                });
+
+            modelBuilder.Entity("TeacherTracker.Api.Models.DailyWorkEntry", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("DailyRecordId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("daily_record_id");
+
+                    b.Property<decimal>("Hours")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("numeric(5,2)")
+                        .HasColumnName("hours");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("text")
+                        .HasColumnName("note");
+
+                    b.Property<int>("WorkCategoryId")
+                        .HasColumnType("integer")
+                        .HasColumnName("work_category_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_daily_work_entries");
+
+                    b.HasIndex("WorkCategoryId")
+                        .HasDatabaseName("ix_daily_work_entries_work_category_id");
+
+                    b.HasIndex("DailyRecordId", "WorkCategoryId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_daily_work_entries_daily_record_id_work_category_id");
+
+                    b.ToTable("daily_work_entries", (string)null);
+                });
+
             modelBuilder.Entity("TeacherTracker.Api.Models.Employee", b =>
                 {
                     b.Property<int>("Id")
@@ -187,6 +388,118 @@ namespace TeacherTracker.Api.Migrations
                         {
                             t.HasCheckConstraint("ck_employment_records_valid_dates", "valid_to IS NULL OR valid_to >= valid_from");
                         });
+                });
+
+            modelBuilder.Entity("TeacherTracker.Api.Models.MonthlyRecord", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("integer")
+                        .HasColumnName("employee_id");
+
+                    b.Property<DateTime?>("LockedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("locked_at");
+
+                    b.Property<string>("LockedByUserId")
+                        .HasColumnType("text")
+                        .HasColumnName("locked_by_user_id");
+
+                    b.Property<int>("Month")
+                        .HasColumnType("integer")
+                        .HasColumnName("month");
+
+                    b.Property<int>("SchoolId")
+                        .HasColumnType("integer")
+                        .HasColumnName("school_id");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("integer")
+                        .HasColumnName("year");
+
+                    b.HasKey("Id")
+                        .HasName("pk_monthly_records");
+
+                    b.HasIndex("SchoolId")
+                        .HasDatabaseName("ix_monthly_records_school_id");
+
+                    b.HasIndex("EmployeeId", "SchoolId", "Year", "Month")
+                        .IsUnique()
+                        .HasDatabaseName("ix_monthly_records_employee_id_school_id_year_month");
+
+                    b.ToTable("monthly_records", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_monthly_records_month", "month BETWEEN 1 AND 12");
+                        });
+                });
+
+            modelBuilder.Entity("TeacherTracker.Api.Models.MonthlyRecordVersion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ContentHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("content_hash");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("CreatedByUserId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("created_by_user_id");
+
+                    b.Property<int>("MonthlyRecordId")
+                        .HasColumnType("integer")
+                        .HasColumnName("monthly_record_id");
+
+                    b.Property<int>("SchemaVersion")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(1)
+                        .HasColumnName("schema_version");
+
+                    b.Property<string>("SnapshotData")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("snapshot_data");
+
+                    b.Property<int>("VersionNumber")
+                        .HasColumnType("integer")
+                        .HasColumnName("version_number");
+
+                    b.HasKey("Id")
+                        .HasName("pk_monthly_record_versions");
+
+                    b.HasIndex("MonthlyRecordId", "VersionNumber")
+                        .IsUnique()
+                        .HasDatabaseName("ix_monthly_record_versions_monthly_record_id_version_number");
+
+                    b.ToTable("monthly_record_versions", (string)null);
                 });
 
             modelBuilder.Entity("TeacherTracker.Api.Models.School", b =>
@@ -331,6 +644,71 @@ namespace TeacherTracker.Api.Migrations
                     b.Navigation("WorkCategory");
                 });
 
+            modelBuilder.Entity("TeacherTracker.Api.Models.AuditLog", b =>
+                {
+                    b.HasOne("TeacherTracker.Api.Models.School", "School")
+                        .WithMany()
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_audit_logs_schools_school_id");
+
+                    b.Navigation("School");
+                });
+
+            modelBuilder.Entity("TeacherTracker.Api.Models.DailyAttendanceSlot", b =>
+                {
+                    b.HasOne("TeacherTracker.Api.Models.AttendanceCode", "AttendanceCode")
+                        .WithMany()
+                        .HasForeignKey("AttendanceCodeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_daily_attendance_slots_attendance_codes_attendance_code_id");
+
+                    b.HasOne("TeacherTracker.Api.Models.DailyRecord", "DailyRecord")
+                        .WithMany()
+                        .HasForeignKey("DailyRecordId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_daily_attendance_slots_daily_records_daily_record_id");
+
+                    b.Navigation("AttendanceCode");
+
+                    b.Navigation("DailyRecord");
+                });
+
+            modelBuilder.Entity("TeacherTracker.Api.Models.DailyRecord", b =>
+                {
+                    b.HasOne("TeacherTracker.Api.Models.MonthlyRecord", "MonthlyRecord")
+                        .WithMany()
+                        .HasForeignKey("MonthlyRecordId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_daily_records_monthly_records_monthly_record_id");
+
+                    b.Navigation("MonthlyRecord");
+                });
+
+            modelBuilder.Entity("TeacherTracker.Api.Models.DailyWorkEntry", b =>
+                {
+                    b.HasOne("TeacherTracker.Api.Models.DailyRecord", "DailyRecord")
+                        .WithMany()
+                        .HasForeignKey("DailyRecordId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_daily_work_entries_daily_records_daily_record_id");
+
+                    b.HasOne("TeacherTracker.Api.Models.WorkCategory", "WorkCategory")
+                        .WithMany()
+                        .HasForeignKey("WorkCategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_daily_work_entries_work_categories_work_category_id");
+
+                    b.Navigation("DailyRecord");
+
+                    b.Navigation("WorkCategory");
+                });
+
             modelBuilder.Entity("TeacherTracker.Api.Models.EmploymentRecord", b =>
                 {
                     b.HasOne("TeacherTracker.Api.Models.Employee", "Employee")
@@ -350,6 +728,39 @@ namespace TeacherTracker.Api.Migrations
                     b.Navigation("Employee");
 
                     b.Navigation("School");
+                });
+
+            modelBuilder.Entity("TeacherTracker.Api.Models.MonthlyRecord", b =>
+                {
+                    b.HasOne("TeacherTracker.Api.Models.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_monthly_records_employees_employee_id");
+
+                    b.HasOne("TeacherTracker.Api.Models.School", "School")
+                        .WithMany()
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_monthly_records_schools_school_id");
+
+                    b.Navigation("Employee");
+
+                    b.Navigation("School");
+                });
+
+            modelBuilder.Entity("TeacherTracker.Api.Models.MonthlyRecordVersion", b =>
+                {
+                    b.HasOne("TeacherTracker.Api.Models.MonthlyRecord", "MonthlyRecord")
+                        .WithMany()
+                        .HasForeignKey("MonthlyRecordId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_monthly_record_versions_monthly_records_monthly_record_id");
+
+                    b.Navigation("MonthlyRecord");
                 });
 #pragma warning restore 612, 618
         }
