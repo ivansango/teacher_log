@@ -36,6 +36,8 @@ namespace TeacherTracker.Api.Data
 
         public DbSet<MonthlyRecordVersion> MonthlyRecordVersions => Set<MonthlyRecordVersion>();
 
+        public DbSet<SchoolMembership> SchoolMemberships => Set<SchoolMembership>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -59,6 +61,10 @@ namespace TeacherTracker.Api.Data
                 entity.HasIndex(e => e.UserId)
                     .IsUnique();
 
+                entity.HasOne(e => e.User)
+                     .WithOne()
+                     .HasForeignKey<Employee>(e => e.UserId)
+                     .OnDelete(DeleteBehavior.Restrict);
             });
 
 
@@ -314,6 +320,38 @@ namespace TeacherTracker.Api.Data
 
                 entity.Property(v => v.CreatedByUserId)
                       .IsRequired();
+            });
+
+            modelBuilder.Entity<SchoolMembership>(entity =>
+            {
+                entity.HasKey(sm => sm.Id);
+
+                entity.HasOne(sm => sm.User)
+                      .WithMany()
+                      .HasForeignKey(sm => sm.UserId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(sm => sm.School)
+                      .WithMany()
+                      .HasForeignKey(sm => sm.SchoolId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasIndex(sm => new
+                {
+                    sm.UserId,
+                    sm.SchoolId,
+                    sm.Role
+                }).IsUnique();
+
+                entity.Property(sm => sm.UserId)
+                      .IsRequired();
+
+                entity.Property(sm => sm.Role)
+                      .HasMaxLength(50)
+                      .IsRequired();
+
+                entity.Property(sm => sm.IsActive)
+                      .HasDefaultValue(true);
             });
         }
     }
