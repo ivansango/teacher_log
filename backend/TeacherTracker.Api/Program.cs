@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // DATABASE
 builder.Services.AddDbContext<ApplicationDbContext>(options => 
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")).UseSnakeCaseNamingConvention()/*.UseOpenIddict()*/);
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")).UseSnakeCaseNamingConvention().UseOpenIddict());
 
 //IDENTITY OPTIONS
 builder.Services.AddIdentityCore<ApplicationUser>(options =>
@@ -35,7 +35,7 @@ builder.Services.AddIdentityCore<ApplicationUser>(options =>
 .AddSignInManager()
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-/*
+
 // JWT INITIALIZATION
 var jwtIssuer = builder.Configuration["Jwt:Issuer"]
     ?? throw new InvalidOperationException(
@@ -98,7 +98,7 @@ builder.Services.AddOpenIddict()
         options.UseEntityFrameworkCore()
                .UseDbContext<ApplicationDbContext>();
     });
-*/
+
 
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
