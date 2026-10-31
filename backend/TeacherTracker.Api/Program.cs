@@ -102,9 +102,10 @@ builder.Services.AddOpenIddict()
 
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
+builder.Services.AddOpenApi();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddSingleton<JwtTokenService>();
-builder.Services.AddOpenApi();
+builder.Services.AddScoped<SchoolService>();
 
 
 var app = builder.Build();

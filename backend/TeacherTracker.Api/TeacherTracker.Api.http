@@ -1,6 +1,31 @@
-@TeacherTracker.Api_HostAddress = http://localhost:5083
 
-GET {{TeacherTracker.Api_HostAddress}}/weatherforecast/
+@baseUrl = https://localhost:7025
+
+### Dohvat svih škola
+GET {{baseUrl}}/api/schools
 Accept: application/json
 
-###
+### Dodavanje nove škole
+POST {{baseUrl}}/api/schools
+Content-Type: application/json
+
+{
+  "name": "Osnovna škola Demo 4",
+  "oib": "98765432102",
+  "address": "Školska ulica 12",
+  "city": "Varaždin"
+}
+
+### Ureðivanje škole
+PUT https://localhost:7025/api/schools/5
+Content-Type: application/json
+
+{
+  "name": "Osnovna škola Demo - Ažurirano",
+  "oib": "12345678901",
+  "address": "Nova školska ulica 15",
+  "city": "Varaždin"
+}
+
+### Deaktiviranje škole
+DELETE https://localhost:7025/api/schools/5
