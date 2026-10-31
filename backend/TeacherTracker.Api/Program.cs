@@ -1,4 +1,3 @@
-using TeacherTracker.Api.Endpoints;
 using Microsoft.EntityFrameworkCore;
 using TeacherTracker.Api.Data;
 using Microsoft.AspNetCore.Identity;
@@ -10,9 +9,11 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// DATABASE
 builder.Services.AddDbContext<ApplicationDbContext>(options => 
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")).UseSnakeCaseNamingConvention());
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")).UseSnakeCaseNamingConvention()/*.UseOpenIddict()*/);
 
+//IDENTITY OPTIONS
 builder.Services.AddIdentityCore<ApplicationUser>(options =>
 {
     options.Password.RequireDigit = true;
@@ -22,16 +23,20 @@ builder.Services.AddIdentityCore<ApplicationUser>(options =>
     options.Password.RequiredLength = 8;
 
     options.User.RequireUniqueEmail = true;
+
+    options.Lockout.DefaultLockoutTimeSpan =
+    TimeSpan.FromMinutes(5);
+
+    options.Lockout.MaxFailedAccessAttempts = 5;
+
+    options.Lockout.AllowedForNewUsers = true;
 })
 .AddRoles<IdentityRole>()
+.AddSignInManager()
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-builder.Services.AddScoped<UserService>();
-
-builder.Services.AddSingleton<JwtTokenService>();
-
-builder.Services.AddOpenApi();
-
+/*
+// JWT INITIALIZATION
 var jwtIssuer = builder.Configuration["Jwt:Issuer"]
     ?? throw new InvalidOperationException(
         "JWT Issuer nije konfiguriran.");
@@ -86,7 +91,21 @@ builder.Services
             };
     });
 
+
+builder.Services.AddOpenIddict()
+    .AddCore(options =>
+    {
+        options.UseEntityFrameworkCore()
+               .UseDbContext<ApplicationDbContext>();
+    });
+*/
+
 builder.Services.AddAuthorization();
+builder.Services.AddControllers();
+builder.Services.AddScoped<UserService>();
+builder.Services.AddSingleton<JwtTokenService>();
+builder.Services.AddOpenApi();
+
 
 var app = builder.Build();
 
@@ -107,7 +126,7 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.MapStatusEndpoints();
+app.MapControllers();
 
 app.Run();
 
