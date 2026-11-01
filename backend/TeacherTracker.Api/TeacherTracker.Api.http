@@ -29,3 +29,14 @@ Content-Type: application/json
 
 ### Deaktiviranje škole
 DELETE https://localhost:7025/api/schools/5
+
+### Pokušaj dodjele veæ postojeæeg OIB-a
+PUT https://localhost:7025/api/schools/7
+Content-Type: application/json
+
+{
+  "name": "Test duplikata",
+  "oib": "12345555501",
+  "address": "Testna ulica 5",
+  "city": "Varaždin"
+}

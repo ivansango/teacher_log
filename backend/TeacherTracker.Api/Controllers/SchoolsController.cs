@@ -79,16 +79,21 @@ namespace TeacherTracker.Api.Controllers
                 return NotFound();
             }
 
-            var updated = await _schoolService.UpdateAsync(id, request);
+            var result = await _schoolService.UpdateAsync(id, request);
 
-            if (updated is null)
+            return result switch
             {
-                return NotFound(new
+                SchoolUpdateResult.Success => NoContent(),
+
+                SchoolUpdateResult.NotFound => NotFound(),
+
+                SchoolUpdateResult.DuplicateOib => Conflict(new
                 {
-                    message = "Škola s tim ID-om ne postoji ili krivi OIB."
-                });
-            }
-            return Ok(updated);
+                    message = "Škola s navedenim OIB-om već postoji."
+                }),
+
+                _ => StatusCode(500)
+            };
         }
 
         [HttpDelete("{id:int}")]

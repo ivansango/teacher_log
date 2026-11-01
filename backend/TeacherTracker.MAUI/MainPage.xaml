@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="TeacherTracker.MAUI.MainPage"
+    Title="Škole">
+
+    <Grid Padding="20"
+          RowDefinitions="Auto,Auto,*"
+          RowSpacing="12">
+
+        <Label
+            Grid.Row="0"
+            Text="TeacherTracker - Škole"
+            FontSize="24"
+            FontAttributes="Bold" />
+
+        <Button
+            Grid.Row="1"
+            Text="Osvježi popis"
+            Clicked="OnRefreshClicked" />
+
+        <ScrollView Grid.Row="2">
+            <VerticalStackLayout Spacing="14">
+
+                <Border Padding="14"
+                        Stroke="#CCCCCC"
+                        StrokeThickness="1">
+
+                    <VerticalStackLayout Spacing="10">
+
+                        <Label
+                            Text="Dodaj novu školu"
+                            FontSize="18"
+                            FontAttributes="Bold" />
+
+                        <Entry
+                            x:Name="NameEntry"
+                            Placeholder="Naziv škole" />
+
+                        <Entry
+                            x:Name="OibEntry"
+                            Placeholder="OIB (11 znamenki)"
+                            Keyboard="Numeric"
+                            MaxLength="11" />
+
+                        <Entry
+                            x:Name="AddressEntry"
+                            Placeholder="Adresa" />
+
+                        <Entry
+                            x:Name="CityEntry"
+                            Placeholder="Grad" />
+
+                        <Button
+                            x:Name="SaveButton"
+                            Text="Spremi školu"
+                            Clicked="OnSaveClicked" />
+
+                    </VerticalStackLayout>
+                </Border>
+
+                <Label
+                    Text="Popis škola"
+                    FontSize="18"
+                    FontAttributes="Bold" />
+
+                <VerticalStackLayout
+                    x:Name="SchoolsContainer"
+                    Spacing="8" />
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+    </Grid>
+</ContentPage>

@@ -78,12 +78,23 @@ namespace TeacherTracker.Api.Services
             };
         }
 
-        public async Task<SchoolResponse?> UpdateAsync(int id, UpdateSchoolRequest request)
+        public async Task<SchoolUpdateResult> UpdateAsync(int id, UpdateSchoolRequest request)
         {
             var school = await _context.Schools
                 .FirstOrDefaultAsync(s => s.Id == id);
 
-            if (school is null) return null;
+            if (school is null)
+            {
+                return SchoolUpdateResult.NotFound;
+            }
+
+            bool duplicateOib = await _context.Schools
+                .AnyAsync(s => s.OIB == request.OIB && s.Id != id);
+
+            if (duplicateOib)
+            {
+                return SchoolUpdateResult.DuplicateOib;
+            }
 
             school.Name = request.Name;
             school.OIB = request.OIB;
@@ -99,18 +110,10 @@ namespace TeacherTracker.Api.Services
                       pg.SqlState == PostgresErrorCodes.UniqueViolation &&
                       pg.ConstraintName == "ix_schools_oib")
             {
-                return null;
+                return SchoolUpdateResult.DuplicateOib;
             }
 
-            return new SchoolResponse
-            {
-                Id = school.Id,
-                Name = school.Name,
-                OIB = school.OIB,
-                Address = school.Address,
-                City = school.City,
-                IsActive = school.IsActive
-            };
+            return SchoolUpdateResult.Success;
         }
 
         public async Task<bool> DeactivateAsync(int id)
